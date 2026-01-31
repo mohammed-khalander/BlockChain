@@ -441,6 +441,8 @@ constructor() {
 }
 ```
 
+> The constructor runs once and only once — at deployment.
+
 ### What is `msg.sender`?
 
 * `msg.sender` = **whoever called the function**
@@ -454,6 +456,8 @@ Example:
 
 * Alice deploys → `owner = Alice`
 * Bob deploys → `owner = Bob`
+
+> And no other can (Whoever calls apart from owner) become the owner 
 
 ---
 
