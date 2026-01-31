@@ -460,7 +460,7 @@ Example:
 ## Step 3: The `book()` function (this is where the magic happens)
 
 ```solidity
-function book() {
+function book() external payable {
     owner.transfer(msg.value);
 }
 ```
