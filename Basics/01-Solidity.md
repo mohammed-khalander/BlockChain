@@ -534,6 +534,9 @@ An **address** represents:
 * 20 bytes long
 * Used to identify users, wallets, and contracts
 
+
+![Image](./Images/01-DataTypes.png)
+
 ---
 
 ## 4.3 Local Variables
@@ -668,6 +671,24 @@ function externalFunc() external {}
 
 > Use the **most restrictive visibility possible** to improve security.
 
+
+
+</br>
+</br>
+
+
+![Image](./Images/02-Functions.png)
+
+</br>
+</br>
+
+
+![Image](./Images/03-Visibility_Data_Types.png)
+
+
+</br>
+</br>
+
 ---
 
 ## 4.7 Function Modifiers (Built-in)
@@ -701,7 +722,9 @@ function add(uint a, uint b) public pure returns (uint) {
 ### `payable`
 
 ```solidity
-function deposit() public payable {}
+function deposit() public payable {
+    balance = msg.value;
+}
 ```
 
 * Allows the function to **receive Ether**
@@ -890,6 +913,21 @@ uint[] public numbers;
 string[] public names;
 uint[10] public fixedNumbers;
 ```
+
+</br>
+</br>
+
+
+![Image](./Images/04-Arrays.png)
+
+
+
+</br>
+</br>
+
+
+
+
 
 ---
 
@@ -1203,6 +1241,11 @@ Indexed parameters allow:
 
 This avoids unnecessary data processing.
 
+
+
+
+
+
 ---
 
 ## 5.5 Working with Ether (Ethereum’s Native Currency)
@@ -1269,6 +1312,19 @@ Triggered when:
 
 💡 Both can contain business logic.
 
+
+```
+We can't change the name of both function (They are standard Keywords)
+
+
+Signature is fixed:
+- external
+- payable
+- no arguments
+- no return values
+
+```
+
 ---
 
 ## 5.7 Checking Balances
@@ -1292,6 +1348,20 @@ address(this).balance
 require(success, "Transfer failed");
 ```
 
+
+```solidity
+pragma solidity ^0.8.0
+
+contract MyContract{
+    function transfer(address payble _to) public payble{
+        (bool sent, ) = _to.call{value:msg.value}("");
+        require(sent, "Failed");
+    }
+}
+```
+
+
+
 #### Why `call`?
 
 * Flexible
@@ -1299,6 +1369,8 @@ require(success, "Transfer failed");
 * Allows error handling
 
 ⚠️ Never ignore `success`.
+
+* We can access sender using `msg.sender`
 
 ---
 
@@ -1346,6 +1418,38 @@ Used for:
 * Complex conditions
 * Explicit failure logic
 
+* In Solidity, the **`revert` statement** is a **crucial error-handling mechanism**.
+* It is used to:
+
+  * **Stop execution**
+  * **Undo all state changes** made during the transaction
+  * **Refund any unused gas** to the caller
+* This behavior ensures **atomicity** (meaning the transaction is all-or-nothing).
+
+#### Example
+
+```solidity
+pragma solidity ^0.8.0
+
+contract MyContract{
+    
+    event Log(string message);
+    
+    function example1(uint _value) public {
+        require(_value>10,"must be greater than 10");
+        emit Log("Success);
+    }
+    
+    function example2(uint _value) public{
+        if(_value<=10){
+            revert("must be greater than 10");
+        }
+        emit Log("Success);
+    }
+}
+```
+
+
 ---
 
 ### Other Error Types (Advanced)
@@ -1388,8 +1492,9 @@ contract Ownable {
 
 ```solidity
 contract MyContract is Ownable {
-    function setName(string memory name) public onlyOwner {
-        // restricted
+    string public name = "Example 1";
+    function setName(string memory _name) public onlyOwner {
+        name = _name;
     }
 }
 ```
@@ -1407,18 +1512,44 @@ contract MyContract is Ownable {
 ### Calling Another Contract (Full Code Known)
 
 ```solidity
-SecretVault vault;
+pragma solidity ^0.8.0
 
-constructor(address vaultAddress) {
-    vault = SecretVault(vaultAddress);
+contract SecretVault{
+    string private secret;
+
+    constructor(stirng memory _secret){
+        secret = _secret;
+    }
+
+    function setSecret(string memory _secret) external{
+        secret = _secret;
+    }
+
+    function getSecret() external view returns(stirng memory){
+        return secret;
+    }
+
+}
+
+
+contract MyContract{
+    SecretVault public secretVault;
+
+    constructor(SecretVault _secretVault){
+        secretVault = _secretVault;
+    }
+
+    function setSecret(stirng memory _secret) public{
+        secretVault.setSecret(_secret);
+    }
+
+    function getSecret() public view returns(string memory){
+        return secretVault.getSecret();
+    }
+
 }
 ```
 
-Then:
-
-```solidity
-vault.setSecret("Hello");
-```
 
 📌 This requires:
 
@@ -1446,22 +1577,24 @@ Used when:
 ### ERC-20 Interface Example
 
 ```solidity
+pragma solidity ^0.8.0
+
 interface IERC20 {
     function transferFrom(address from, address to, uint amount) external returns (bool);
 }
-```
 
----
+// Using the Interface
 
-### Using the Interface
+contract MyContract{
 
-```solidity
-function deposit(address token, uint amount) public {
-    IERC20(token).transferFrom(
-        msg.sender,
-        address(this),
-        amount
-    );
+    function deposit(address token, uint amount) public {
+        IERC20(token).transferFrom(
+            msg.sender,
+            address(this),
+            amount
+        );
+    }
+
 }
 ```
 
@@ -1487,35 +1620,3 @@ You now understand:
 ✅ Interfaces & ERC-20 interaction
 
 ---
-
-# Final Course Wrap-Up
-
-You have now learned **the complete core of Solidity**, including:
-
-* Blockchain data storage
-* Smart contract architecture
-* Ethereum transaction flow
-* Real-world security patterns
-* Professional development practices
-
-This foundation is **enough to build real smart contracts**, understand audits, and move into frameworks like **Hardhat**, **Foundry**, and **OpenZeppelin**.
-
----
-
-📌 **Next logical steps (recommended):**
-
-* Remix deployment walkthrough
-* MetaMask integration
-* Testnet deployment
-* Writing your first ERC-20 / ERC-721
-* Gas optimization
-* Security vulnerabilities
-
-If you want, I can now:
-
-* Convert this into **PDF study notes**
-* Add **interview Q&A**
-* Add **real-world project exercises**
-* Continue with **deployment & Remix UI step-by-step**
-
-Just tell me what you want next.
