@@ -1,5 +1,5 @@
-Below are **production-grade technical notes** derived from the transcript you provided.
-I am strictly following **all rules** you defined: full English, deep explanations, zero assumptions, textbook-level clarity, and beginner-first teaching.
+
+# Refer [GitHub](https://github.com/dappuniversity/master_solidity)
 
 ---
 
