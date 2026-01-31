@@ -1517,7 +1517,7 @@ pragma solidity ^0.8.0
 contract SecretVault{
     string private secret;
 
-    constructor(stirng memory _secret){
+    constructor(string memory _secret){
         secret = _secret;
     }
 
@@ -1525,7 +1525,7 @@ contract SecretVault{
         secret = _secret;
     }
 
-    function getSecret() external view returns(stirng memory){
+    function getSecret() external view returns(string memory){
         return secret;
     }
 
@@ -1539,7 +1539,7 @@ contract MyContract{
         secretVault = _secretVault;
     }
 
-    function setSecret(stirng memory _secret) public{
+    function setSecret(string memory _secret) public{
         secretVault.setSecret(_secret);
     }
 
