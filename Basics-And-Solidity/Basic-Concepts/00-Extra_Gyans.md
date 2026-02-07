@@ -1095,7 +1095,7 @@ tx.wait() resolves
 
 
 
-# Query
+# Query (My doubt)
 
 > So, does it means, in the real blockchain world 2026, there's nothing called 'Miners' exists, only 'Validators' are who actually they are ?
 
