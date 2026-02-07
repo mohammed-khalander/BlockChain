@@ -95,7 +95,7 @@ https://eth-sepolia.g.alchemy.com/v2/XXXXXXX
 5. Enter password
 6. Copy the key (starts with `0x...`)
 
-⚠️ **DO NOT SHARE THIS**
+⚠️ **DO NOT SHARE THIS** </br>
 ⚠️ **NEVER COMMIT THIS**
 
 👉 This becomes `SEPOLIA_PRIVATE_KEY`
@@ -137,6 +137,12 @@ $ bunx hardhat keystore set SEPOLIA_PRIVATE_KEY
 Key "SEPOLIA_PRIVATE_KEY" set in the production keystore
 ```
 
+``` bash
+bunx hardhat keystore list
+bunx hardhat keystore get <key-name>
+bunx hardhat keystore path
+bunx hardhat keystore delete <key-name>
+```
 
 
 
