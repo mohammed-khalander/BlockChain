@@ -1,0 +1,39 @@
+{
+  "_format": "hh3-sol-build-info-1",
+  "id": "solc-0_8_28-94b3f79dee10fa8d5889e4678892ea61f6756073",
+  "solcVersion": "0.8.28",
+  "solcLongVersion": "0.8.28+commit.7893614a",
+  "userSourceNameMap": {
+    "contracts/TrustCart.sol": "project/contracts/TrustCart.sol"
+  },
+  "input": {
+    "language": "Solidity",
+    "settings": {
+      "evmVersion": "cancun",
+      "optimizer": {
+        "enabled": true,
+        "runs": 200
+      },
+      "outputSelection": {
+        "*": {
+          "": [
+            "ast"
+          ],
+          "*": [
+            "abi",
+            "evm.bytecode",
+            "evm.deployedBytecode",
+            "evm.methodIdentifiers",
+            "metadata"
+          ]
+        }
+      },
+      "remappings": []
+    },
+    "sources": {
+      "project/contracts/TrustCart.sol": {
+        "content": "// SPDX-License-Identifier: UNLICENSED\npragma solidity ^0.8.28;\n\ncontract TrustCart{\n    string public storeName;\n    address public owner;\n    uint256 public totalItems;\n\n    struct Item {\n        uint256 id;\n        string name;\n        string category;\n        string image;\n        uint256 price;\n        uint256 ratings;\n        uint256 stock;\n        bool exists;\n    }\n\n    struct Order{\n        uint256 orderId;\n        uint256 itemId; \n        uint256 timeStamp;\n        uint256 pricePaid;\n    }\n\n    mapping(uint256 => Item) public items;\n    mapping(address => uint256) public orderCount;\n    mapping(address => mapping(uint256 => Order)) public orders;\n\n    event constructorEvent(address indexed owner,string name,uint256 totalItems);\n    event ItemListed(uint256 indexed itemId,string name, uint256 price, uint256 stock);\n    event StockAdded(uint256 indexed itemId,uint256 stockAmount);\n    event ItemPurchased(address indexed buyer,uint256 indexed orderId, uint256 indexed itemId, uint256 pricePaid);\n    event ExcessAmountRefund(address indexed buyer, uint indexed orderId, uint256 indexed itemId,uint256 amountRefunded);\n    event Withdrawal(address indexed owner,uint256 amount);\n\n\n    modifier onlyOwner(){\n      require(msg.sender==owner,\"Action is prohibitted, Only Owner is allowed\");\n      _;\n    }\n\n    modifier itemExists(uint256 itemId){\n      require(items[itemId].exists,\"Item Does Not exists\");\n      _;\n    }\n\n\n    constructor(string memory _storeName){\n        storeName = _storeName;\n        owner = msg.sender;\n        totalItems=0;\n\n        emit constructorEvent(msg.sender, _storeName, 0);\n    }\n\n    function listItem(string calldata _name,string calldata _category,string calldata _image,uint256 _price,uint256 _ratings,uint256 _stock) external onlyOwner {\n\n      require(_price>0,\"Price Must Be Greater Than Zero\");\n      require(_stock>0,\"Stocks Must Be Greater Than Zero\");   \n\n      totalItems++;\n\n      items[totalItems] = Item({\n        id:totalItems,\n        name:_name,\n        category:_category,\n        image:_image,\n        price:_price,\n        ratings:_ratings,\n        stock:_stock,\n        exists:true\n      });\n\n      emit ItemListed(totalItems, _name, _price, _stock);\n\n    }\n\n    /**\n     * Testing for the above includes\n     * 1. onlyOwner\n     * 2. Price>0, stock>0\n     * 3. Emit event\n     * 4. totalItem Increment (How should it be, like considering it as first item ? like I should check after calling the function totalItems will become 1, Should I test in this way or how because many test cases will come right ? like totalITem can be anything literally)\n     * 5. Sent Item details added to 'items' mapping\n     * 6. Is anything else needed for testing ?\n     */\n\n\n    function addStock(uint256 _itemId,uint256 _stock) external onlyOwner itemExists(_itemId) {\n        require(_stock>0,\"Stocks Must Be Greater Than Zero\");   \n        items[_itemId].stock +=_stock;\n        emit StockAdded(_itemId,_stock);\n    }\n\n    function buyItem(uint256 _itemId) external payable itemExists(_itemId) {\n        Item storage item = items[_itemId];\n\n        require(item.stock>0,\"Not Available, Out Of Stock\");\n        require(msg.value>=item.price,\"Insufficient ETHs\");\n\n        items[_itemId].stock--; // Since we have used storage above, so we can directly use item.stock--;\n        \n        orderCount[msg.sender]++;\n        uint256 currentOrderId = orderCount[msg.sender];\n\n        orders[msg.sender][currentOrderId] = Order({\n            orderId:currentOrderId,\n            itemId:_itemId,\n            pricePaid:items[_itemId].price,\n            timeStamp:block.timestamp\n        }); \n\n        uint256 excess = msg.value - items[_itemId].price;  \n\n        if(excess>0){\n            (bool success,)= payable(msg.sender).call{value:excess}(\"\");\n            require(success,\"Excess Amount Refund Failed\");\n            emit ExcessAmountRefund(msg.sender, currentOrderId, _itemId, excess);\n        }\n\n        emit ItemPurchased(msg.sender, currentOrderId, _itemId, items[_itemId].price);\n    }\n\n    function withdraw() external onlyOwner {\n        uint256 balance = address(this).balance;\n        require(balance>0,\"No ETHs To Withdraw\");\n\n       (bool success,) = owner.call{value:balance}(\"\");\n       require(success,\"Payment to Owner Failed\");\n       \n       emit Withdrawal(owner, balance);\n    }\n\n\n    function getItem(uint256 _itemId) external view itemExists(_itemId) returns (Item memory){\n        return items[_itemId];\n    }\n\n    function getOrder(address buyer, uint256 _orderId) external view returns (Order memory){\n        return orders[buyer][_orderId];\n    }\n\n    receive() external payable {}\n    fallback() external payable {}\n\n}\n\n/**\n * How Gas Fees Are Actually Handled (buyItem example)\n *\n * Important:\n * - Solidity NEVER calculates gas\n * - Contracts NEVER subtract gas from refunds\n * - Gas is handled entirely by the EVM / protocol\n *\n * Execution flow:\n * User Wallet ──▶ EVM ──▶ Smart Contract\n *\n * 1. User creates a transaction with:\n *    - msg.value = X\n *    - gasLimit, gasPrice\n *\n * 2. EVM checks (no ETH moved yet):\n *    user.balance >= X + (gasLimit * gasPrice)\n *\n * 3. If check passes, execution starts:\n *    - X ETH is transferred to the contract\n *    - Gas meter starts tracking execution cost\n *\n * 4. Solidity code runs:\n *    - State updates\n *    - Refunds excess ETH (msg.value - price)\n *\n * 5. After execution completes:\n *    - EVM calculates actualGasUsed * gasPrice\n *    - Gas cost is deducted from USER WALLET\n *\n * Key invariants:\n * - User net loss = item price + gas\n * - Contract net gain = item price\n * - Refund logic NEVER considers gas\n */\n"
+      }
+    }
+  }
+}
