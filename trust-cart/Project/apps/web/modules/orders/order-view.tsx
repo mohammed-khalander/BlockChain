@@ -143,6 +143,7 @@ export const OrderView = () => {
 
             if(orderCount==0){
               setMyOrders([]);
+              setLoading(false);
               return;
             }
                  
