@@ -1,10 +1,10 @@
-import { FileUpload } from "@/modules/files/file-upload";
+import { AdminDash } from "@/modules/files/file-upload";
 
 
 
 const Page = ()=>{
     return(
-       <FileUpload/>
+       <AdminDash/>
     )
 }
 export default Page;

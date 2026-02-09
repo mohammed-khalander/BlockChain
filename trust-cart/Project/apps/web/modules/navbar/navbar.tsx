@@ -14,7 +14,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { cn } from "@/lib/utils";
 
 import { ModeToggle } from "@/components/mode-toggle";
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import Link from "next/link"
 
 // Simple logo component for the navbar
@@ -48,7 +48,7 @@ const HamburgerIcon = ({ className, ...props }: React.SVGAttributes<SVGElement>)
     {...(props as any)}
   >
     <path
-      className="origin-center -translate-y-[7px] transition-all duration-300 ease-[cubic-bezier(.5,.85,.25,1.1)] group-aria-expanded:translate-x-0 group-aria-expanded:translate-y-0 group-aria-expanded:rotate-315"
+      className="origin-center -translate-y-1.75 transition-all duration-300 ease-[cubic-bezier(.5,.85,.25,1.1)] group-aria-expanded:translate-x-0 group-aria-expanded:translate-y-0 group-aria-expanded:rotate-315"
       d="M4 12L20 12"
     />
     <path
@@ -56,7 +56,7 @@ const HamburgerIcon = ({ className, ...props }: React.SVGAttributes<SVGElement>)
       d="M4 12H20"
     />
     <path
-      className="origin-center translate-y-[7px] transition-all duration-300 ease-[cubic-bezier(.5,.85,.25,1.1)] group-aria-expanded:translate-y-0 group-aria-expanded:rotate-135"
+      className="origin-center translate-y-1.75 transition-all duration-300 ease-[cubic-bezier(.5,.85,.25,1.1)] group-aria-expanded:translate-y-0 group-aria-expanded:rotate-135"
       d="M4 12H20"
     />
   </svg>
@@ -84,10 +84,21 @@ export interface NavbarProps extends React.HTMLAttributes<HTMLElement> {
 // Default navigation links
 const defaultNavigationLinks: NavbarNavLink[] = [
   { href: "/", label: "Home", active:true },
-  { href: "/file-upload", label: "Files" },
-  { href: "/pricing", label: "Pricing" },
-  { href: "/about", label: "About" },
+  { href: "/file-upload", label: "Admin" },
+  { href: "/shop", label: "Shop" },
+  { href: "/orders", label: "Orders" },
 ]
+
+
+
+import { AppContext } from "@/contexts/AppContext"
+import { toast } from "sonner"
+import { ethers } from "ethers"
+
+const formatAccountAddress = (account:string)=>{
+  return `${account.slice(0,6)}...${account.slice(38,42)}`;
+}
+
 
 export const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
   (
@@ -108,6 +119,21 @@ export const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
   ) => {
     const [isMobile, setIsMobile] = useState(false)
     const containerRef = useRef<HTMLElement>(null)
+
+    const context  = React.useContext(AppContext);
+
+    if(!context){
+      toast.error("Context Is Not loaded in Navbar!!");
+      toast.error("You Can't Continue With The Web ");
+      return <h1>Loading...</h1>
+    }
+
+    const {account,setAccount,provider,connectWallet} = context;
+
+
+
+
+
 
     useEffect(() => {
       const checkWidth = () => {
@@ -144,10 +170,12 @@ export const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
 
     const pathname = usePathname();
 
+    const router = useRouter();
+
     return (
       <header
         className={cn(
-          "sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 px-4 md:px-6 **:no-underline",
+          `${pathname=="/shop" ? "w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 px-4 md:px-6 **:no-underline": "sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 px-4 md:px-6 **:no-underline"}`,
           className,
         )}
         ref={combinedRef}
@@ -191,7 +219,7 @@ export const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
               <button
                 type="button"
                 className="flex items-center space-x-2 text-primary hover:text-primary/90 transition-colors cursor-pointer"
-                onClick={e => e.preventDefault()}
+                onClick={(e) => {e.preventDefault(); router.push("/")}}
               >
                 <div className="text-2xl">{logo}</div>
                 <span className="hidden font-bold text-xl sm:inline-block">Trust-Cart</span>
@@ -218,18 +246,25 @@ export const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
           {/* Right side */}
           <div className="flex items-center gap-3">
             <ModeToggle/>
+            {
+              account ? 
+              <Button className="text-sm font-medium px-4 h-9 rounded-md shadow-sm">
+                {formatAccountAddress(account)}
+              </Button>
+              :
+
             <Button
-              className="text-sm font-medium px-4 h-9 rounded-md shadow-sm"
-              onClick={e => {
-                e.preventDefault()
-                if (onCtaClick) {
-                  onCtaClick()
-                }
-              }}
-              size="sm"
+            className="text-sm font-medium px-4 h-9 rounded-md shadow-sm"
+            onClick={e => {
+              e.preventDefault()
+              connectWallet();
+            }}
+            size="sm"
             >
-              {ctaText}
+              Connect
             </Button>
+
+            }
           </div>
         </div>
       </header>

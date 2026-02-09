@@ -5,6 +5,11 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 
+import { Navbar } from "@/modules/navbar/navbar";
+import AppContextProvider from "@/contexts/AppContext";
+import { Footer } from "@/modules/footer/footer";
+
+
 const notoSans = Noto_Sans({variable:'--font-sans'});
 
 const geistSans = Geist({
@@ -31,9 +36,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={notoSans.variable}>
+    <html lang="en" className={notoSans.variable} suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`} suppressHydrationWarning
       >
         <ThemeProvider
             attribute="class"
@@ -41,9 +46,13 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            {children}
+            <AppContextProvider>
+              <Navbar suppressHydrationWarning />
+              {children}
+              <Footer/>
+            </AppContextProvider>
           </ThemeProvider>
-          <Toaster />
+          <Toaster position="top-right" richColors/>
       </body>
     </html>
   );
