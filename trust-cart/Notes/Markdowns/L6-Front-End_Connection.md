@@ -56,3 +56,15 @@ declare global {
 
 export {};
 ```
+
+</br>
+</br>
+</br>
+</br>
+</br>
+
+
+* While Connecting to Smart Contract from front-end, everything should be on same network, 
+* The metamask should be on same network as the deployed contract in.
+* Copy the Types `contracts/types` of contracts to `web/types`
+

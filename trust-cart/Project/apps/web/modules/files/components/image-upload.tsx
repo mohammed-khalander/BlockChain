@@ -1,7 +1,7 @@
 "use client";
 
 import { Dropzone, DropzoneContent, DropzoneEmptyState } from "@/components/ui/file-upload";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 
 import { pinata } from "@/lib/pinata-ipfs";
 
@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button";
 
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { AppContext } from "@/contexts/AppContext";
+import { getReadContract } from "@/lib/smart-contract";
 
 
 
@@ -31,16 +33,42 @@ export const ImageUpload = ()=>{
         return () => URL.revokeObjectURL(url)
     },[files]);
 
+    const context = useContext(AppContext);
 
 
     const uploadFile = async () => {
+
+         if(!context){
+            return;
+         }
+         const {provider,account,signer} = context;
+         if(!provider || !account || !signer){
+             toast.error("Wallet Is Not Connected Yet....");
+             setTimeout(()=>{ 
+               toast.warning("Please Connect To the Wallet");
+             },1000);
+             return;
+         };
+
+         setUploading(true);
+         
+         const trust_cart_contract_read = await getReadContract(provider);
+         const owner = await trust_cart_contract_read.owner();
+         if(owner.toLocaleLowerCase()!=account.toLocaleLowerCase()){
+           setUploading(false);
+           toast.warning("Only Admin is allowed to Execute...");
+          return;
+        }        
+        
+         
+        
         if (!files) {
           toast.error("No file selected");
           return;
         }
 
         try {
-          setUploading(true);
+          toast.loading("Uploading....");
           const urlRequest = await fetch("/api/url"); 
           const urlResponse = await urlRequest.json(); 
           const upload = await pinata.upload.public
@@ -49,11 +77,15 @@ export const ImageUpload = ()=>{
           console.log(upload);
 
           const fileUrl = await pinata.gateways.public.convert(upload.cid);
+          toast.dismiss();
+          toast.success("Image Uploaded to IPFS Successfully..");
           setPreviewUrlIPFS(fileUrl);
           // URL:- https://${gatewayDomain}/ipfs/${cid}`
           // Example:- https://jade-top-kite-609.mypinata.cloud/ipfs/bafybeib5aimdflropyxah5oodm6q6yovfeyuyz7wk7sj77iqemwbtvmixe
 
           setUploading(false);
+          // setPreviewUrl(null);
+          // setPreviewUrlIPFS("");
         } catch (e) {
           console.log(e);
           setUploading(false);
@@ -76,7 +108,7 @@ export const ImageUpload = ()=>{
         <DropzoneContent />
         <DropzoneEmptyState />
       </Dropzone>
-      <div className="flex gap-2 flex-wrap">
+      <div className="flex gap-2 flex-wrap justify-center align-center">
       {previewUrl && (
         <img
           src={previewUrl}

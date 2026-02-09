@@ -128,7 +128,7 @@ export const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
       return <h1>Loading...</h1>
     }
 
-    const {account,setAccount,provider,connectWallet} = context;
+    const {account,connectWallet} = context;
 
 
 

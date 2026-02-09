@@ -45,6 +45,12 @@ import {
 
 
 
+import { getWriteContract } from "@/lib/smart-contract";
+
+import { getReadContract } from "@/lib/smart-contract";
+import { AppContext } from "@/contexts/AppContext";
+import { useContext, useEffect } from "react";
+import { ethers } from "ethers"
 
 
 
@@ -57,7 +63,7 @@ const formSchema = z.object({
     .string()
     .min(1, "Category Is Required"),
    image:z.string().min(1,"IPFS Image Link is Required"),
-   price:z.number().int("Price must be a whole number").min(1, "Price is Required"),
+   price:z.number().min(.0000001, "Price is Required"),
    ratings:z.number().int("Rating must be a whole number").min(1, "Rating must be at least 1").max(5, "Rating must be at most 5"),
    stock:z.number().int("Stock must be a whole number").min(1,"Item Stock Is Required"),
 })
@@ -70,7 +76,8 @@ export function ItemForms() {
       { label: "Gaming", value: "gaming" },
       { label: "Grocery", value: "grocery" },
       { label: "Electronics", value: "electronics" }
-    ] as const
+    ] as const;
+    const [loading,setLoading] = React.useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -81,10 +88,77 @@ export function ItemForms() {
     },
   })
 
-  function onSubmit(data: z.infer<typeof formSchema>) {
-    form.reset()
-    console.log(data);
+  const context = useContext(AppContext);
+
+  async function onSubmit(data: z.infer<typeof formSchema>) {
+         if(!context){
+            return;
+        }
+        const {provider,account,signer} = context;
+        if(!provider || !account || !signer){
+            toast.error("Wallet Is Not Connected Yet....");
+            setTimeout(()=>{ 
+              toast.warning("Please Connect To the Wallet");
+            },1000);
+            return;
+        };
+        try{
+            console.log(data);
+            setLoading(true);
+            const trust_cart_contract_read = await getReadContract(provider);
+            const trust_cart_contract_write = await getWriteContract(signer);
+            console.log("Smart Contract is ",trust_cart_contract_read);
+            const name = await trust_cart_contract_read.storeName();
+            const items = await trust_cart_contract_read.totalItems();
+            const owner = await trust_cart_contract_read.owner();
+            const userConnectedNetwork = await provider.getNetwork();
+            console.log(`Name of the Contract is ${name} and total Items ${items}`);
+            console.log("Owner of the Contract", owner);
+            console.log("Connected User .. ", account);
+            console.log("User Is Connected to..",userConnectedNetwork);
+            const priceInWei = ethers.parseEther(data.price.toString());
+            if(owner.toLocaleLowerCase()!=account.toLocaleLowerCase()){
+              toast.warning("Only Admin is allowed to Execute...");
+              return;
+            }
+            const ListTransaction = await trust_cart_contract_write.listItem(
+              data.title,
+              data.category,
+              data.image,
+              priceInWei,
+              BigInt(data.ratings),
+              BigInt(data.stock)
+            );
+
+            toast.loading(`${data.title} Uploading to BlockChain....`);
+
+            const receipt = await ListTransaction.wait();
+
+            toast.dismiss();
+
+            console.log("Transaction :- ",ListTransaction);
+            console.log("Transaction Receipt :- ",receipt);
+
+            toast.success(`${data.title} Listed Onto BlockChain Successfully!`);
+
+            form.reset()
+        }catch(error:any){
+            toast.error("Transaction Failed... ");
+            console.log("Error in shop View Transaction ", error);
+        }finally{
+          setLoading(false);
+        }
   }
+
+    
+
+    if(!context){
+        return <h1>Loading....</h1> ;
+    }
+    // const {provider,account,signer} = context;
+    // if(!provider || !account || !signer){
+    //     return <h1>Loading.....</h1> ;
+    // };
 
   return (
     <Card className="w-full md:px-10 flex-1">
@@ -258,7 +332,7 @@ export function ItemForms() {
           <Button type="button" variant="outline" onClick={() => form.reset()}>
             Reset
           </Button>
-          <Button type="submit" form="form-rhf-demo">
+          <Button type="submit" form="form-rhf-demo" disabled={loading}>
             Submit
           </Button>
         </Field>
