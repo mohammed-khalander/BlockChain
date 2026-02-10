@@ -110,7 +110,7 @@ const tabs = [
   return (
     <div className='w-full min-h-screen bg-muted flex justify-center p-4'>
       <Tabs defaultValue='Items' className='w-full'>
-        {/* <ScrollArea> */}
+         <ScrollArea>
 
         <TabsList className='w-full bg-background'>
           {tabs.map(tab => (
@@ -119,8 +119,8 @@ const tabs = [
             </TabsTrigger>
           ))}
         </TabsList>
-        {/* <ScrollBar orientation='horizontal'/> */}
-        {/* </ScrollArea> */}
+         <ScrollBar orientation='horizontal'/>
+        </ScrollArea>
 
         {tabs.map(tab => (
           <TabsContent key={tab.value} value={tab.value} className='flex flex-col px-20 max-sm:px-0'>
