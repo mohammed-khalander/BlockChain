@@ -254,7 +254,7 @@ export const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
               :
 
             <Button
-            className="text-sm font-medium px-4 h-9 rounded-md shadow-sm"
+            className="text-sm font-medium px-4 h-9 rounded-md shadow-sm cursor-pointer"
             onClick={e => {
               e.preventDefault()
               connectWallet();

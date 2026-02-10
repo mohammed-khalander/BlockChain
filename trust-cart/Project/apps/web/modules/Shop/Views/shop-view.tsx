@@ -10,6 +10,7 @@ import { AppContext } from "@/contexts/AppContext";
 import { useContext, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { LoadingState } from "@/components/loading-state";
+import { ConnectWallet } from "@/components/connect-wallet";
 
 
 
@@ -212,10 +213,16 @@ const products2:ProductType[] = [
             </div>
         );
     }
-    // const {provider,account} = context;
-    // if(!provider || !account){
-    //     return <h1>Loading.....</h1> ;
-    // };
+    const {provider,account} = context;
+    if(!provider || !account){
+       return(
+        <>
+            <div className="h-[calc(100vh-250px)] flex flex-col justify-center align-center">
+                <ConnectWallet/>
+            </div>
+        </>
+       )        
+    };
 
     if(loading){
         return (

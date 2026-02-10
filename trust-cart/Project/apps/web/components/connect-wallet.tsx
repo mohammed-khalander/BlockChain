@@ -38,7 +38,7 @@ export function ConnectWallet() {
         </EmptyDescription>
       </EmptyHeader>
       <EmptyContent>
-        <Button variant="outline" size="sm" onClick={connectWallet} >
+        <Button onClick={connectWallet} className="cursor-pointer" >
           Connect
         </Button>
       </EmptyContent>
