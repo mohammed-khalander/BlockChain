@@ -65,6 +65,7 @@ export {};
 
 
 * While Connecting to Smart Contract from front-end, everything should be on same network, 
+  * Ex:- You can't be like " you'll Deploy Smart Contract in Sepolia " and " You'll connect using HardHat Local Nodes "
 * The metamask should be on same network as the deployed contract in.
 * Copy the Types `contracts/types` of contracts to `web/types`
 
