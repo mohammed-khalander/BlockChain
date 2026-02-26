@@ -106,6 +106,7 @@ QmXabc123...
 This is called a **CID (Content Identifier)**
 
 📌 If file changes → hash changes
+</br>
 📌 Same file → same hash (always)
 
 ---
@@ -144,7 +145,7 @@ You ask:
 
 # 4️⃣ Where are IPFS files stored?
 
-Important correction ❗
+Important correction ❗</br>
 **IPFS is NOT a blockchain**
 
 Files live on:
@@ -372,11 +373,17 @@ You combine them to get:
 ## You now understand (for real):
 
 ✔ What IPFS is
+</br>
 ✔ Why it exists
+</br>
 ✔ What a CID is
+</br>
 ✔ Why pinning matters
+</br>
 ✔ How DApps integrate it
+</br>
 ✔ Full stack flow with Solidity + Hardhat + Next.js + TS + Bun
+</br>
 
 This is **core Web3 knowledge**.
 

@@ -66,9 +66,13 @@ apps/contracts/
 ```
 
 📌 **IMPORTANT**
+</br>
 This is a **fully isolated blockchain app**.
+</br>
 It does NOT depend on Next.js.
+</br>
 It can be deployed, tested, and run alone.
+</br>
 
 ---
 

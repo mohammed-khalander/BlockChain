@@ -362,9 +362,9 @@ User:     B − 2
 Contract: +2
 ```
 
-So far:
-✔ user paid **exactly the item price**
-✔ contract keeps **exactly the item price**
+So far: </br>
+✔ user paid **exactly the item price** </br>
+✔ contract keeps **exactly the item price** </br>
 
 ---
 
