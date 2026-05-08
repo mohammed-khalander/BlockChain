@@ -3,7 +3,7 @@
 <img src="logo.svg" alt="TrustCart Logo" width="128">
 
 # TrustCart
-### *Secure, Transparent, and Immutable Supply Chain Management.*
+### *Secure, Transparent, Trustless Direct-to-Consumer Supply Chain, Powered by Blockchain.*
 
 [![Solidity](https://img.shields.io/badge/Solidity-e6e6e6?style=for-the-badge&logo=solidity&logoColor=black)](#)
 [![Hardhat](https://img.shields.io/badge/Hardhat-222222?style=for-the-badge&logo=hardhat)](#)
@@ -20,15 +20,15 @@
 
 ## Overview
 
-**TrustCart** is a modern, blockchain-powered supply chain and e-commerce hybrid system. Designed to fight counterfeiting and ensure absolute transparency, TrustCart guarantees that goods originate exclusively from a verified manufacturer (Admin) before securely reaching the consumer via an immutable storefront.
+**TrustCart** is a blockchain-based Direct-to-Consumer (D2C) supply chain platform. Designed to eliminate intermediaries and fight counterfeiting, TrustCart guarantees that goods originate exclusively from a verified manufacturer (Admin) and transfer ownership directly to the end consumer, with every step of that pipeline permanently recorded on-chain.
 
-By leveraging blockchain technology, the entire inventory management, stock incrementing, and verifiable checkout process are permanently recorded on-chain. This creates a trustless environment where product origin is indisputable and consumer payments are cleanly handled via autonomous escrows.
+By leveraging blockchain technology, the entire D2C pipeline, from manufacturer inventory registration to consumer ownership transfer is permanently recorded on-chain. This creates a trustless environment where product origin is indisputable,the supply chain is fully auditable, and settlements are handled directly via autonomous smart contract escrows with zero platform fees.
 
 ---
 
 ## Key Features & Technology Stack
 
-TrustCart integrates cutting-edge Web3 technologies to provide a seamless, secure, and decentralized and transparent supply chain ecosystem:
+TrustCart integrates cutting-edge Web3 technologies to provide a seamless, secure, decentralized and fully transparent D2C supply chain ecosystem:
 
 ### Immutable Smart Contracts (Solidity & HardHat)
 - **Verified Manufacturer Inventory:** The supply chain origin is strictly enforced via **Solidity** smart contracts. Only the authorized Admin (Manufacturer) can securely initialize product categories and transparently increment stock on-chain (`listItem`, `addStock`), completely preventing unverified counterfeit injection at the source.
