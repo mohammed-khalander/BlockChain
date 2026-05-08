@@ -91,12 +91,11 @@ export const HeroSection = ({ menudata }: { menudata: MenuData[] }) => {
         <div className='grid grid-cols-1 gap-6 gap-y-12 md:gap-y-16 lg:grid-cols-5'>
           <div className='flex w-full flex-col justify-center gap-5 max-lg:items-center lg:col-span-3 lg:h-95.5'>
             <h1 className='text-3xl leading-[1.29167] font-semibold text-balance max-lg:text-center sm:text-4xl lg:text-5xl'>
-              Powering commerce with blockchain trust
+              Powering D2C Supply Chains with Blockchain Trust
             </h1>
 
             <p className='text-muted-foreground max-w-xl text-md max-lg:text-center'>
-              Experience decentralized commerce built on transparency, security, and verifiable ownership — where every product,
-  transaction, and review is backed by blockchain technology.
+  Experience a trustless Direct-to-Consumer supply chain where every product originates from a verified manufacturer, every ownership transfer is settled on-chain, and no distributor, retailer, or intermediary platform stands between the source and the consumer.
             </p>
 
             <div className='flex items-center gap-4'>
@@ -106,7 +105,7 @@ export const HeroSection = ({ menudata }: { menudata: MenuData[] }) => {
                 className='group relative w-fit overflow-hidden rounded-full text-base before:absolute before:inset-0 before:rounded-[inherit] before:bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.5)_50%,transparent_75%,transparent_100%)] before:bg-size-[250%_250%,100%_100%] before:bg-position-[200%_0,0_0] before:bg-no-repeat before:transition-[background-position_0s_ease] before:duration-1000 hover:before:bg-position-[-100%_0,0_0] has-[>svg]:px-6 dark:before:bg-[linear-gradient(45deg,transparent_25%,rgba(0,0,0,0.2)_50%,transparent_75%,transparent_100%)]'
               >
                 <a href='/shop'>
-                  Order now
+                  Claim Yours
                   <ArrowRightIcon className='transition-transform duration-200 group-hover:translate-x-0.5' />
                 </a>
               </Button>
