@@ -35,14 +35,14 @@ const AppContextProvider = ({ children }: Props) => {
     const [account,setAccount] = useState<string|null>(null);
 
     // const ConnectBlockChain = async ()=>{
-    //     if(!window.ethereum){
+    //     if(!window.phantom.ethereum){
     //         toast.error("Please Install Metamask!! ");
     //         return;
     //     }
     //     try{
 
 
-    //         const browserProvider = new ethers.BrowserProvider(window.ethereum);
+    //         const browserProvider = new ethers.BrowserProvider(window.phantom.ethereum);
     //         const network = await browserProvider.getNetwork();
 
     //         /**
@@ -78,12 +78,12 @@ const AppContextProvider = ({ children }: Props) => {
     
 
     const reconnectIfAuthorized = async ()=>{
-      if(!window.ethereum)return;
+      if(!window.phantom?.ethereum)return;
       try{
-        const accounts = await window.ethereum.request({method:"eth_accounts"});
+        const accounts = await window.phantom?.ethereum.request({method:"eth_accounts"});
         if(accounts.length==0)return;
 
-        const browserProvider = new ethers.BrowserProvider(window.ethereum);
+        const browserProvider = new ethers.BrowserProvider(window.phantom.ethereum);
         const signer = await browserProvider.getSigner();
         const network = await browserProvider.getNetwork();
         
@@ -104,11 +104,11 @@ const AppContextProvider = ({ children }: Props) => {
         //   toast.error("Provider Not Yet Ready");
         //   return;
         // }
-        if(!window.ethereum){
+        if(!window.phantom?.ethereum){
           toast.error("Metamask Not Installed ..");
           return;
         }
-        const browserProvider = new ethers.BrowserProvider(window.ethereum);
+        const browserProvider = new ethers.BrowserProvider(window.phantom.ethereum);
         const _signer = await browserProvider.getSigner(); 
         const _account = await _signer.getAddress();
         if(!_account)return;
@@ -129,7 +129,7 @@ const AppContextProvider = ({ children }: Props) => {
     }
 
     // const setProviderAndSigner = async ()=>{
-    //   const ethereum = window.ethereum;
+    //   const ethereum = window.phantom.ethereum;
     //   if(!ethereum){
     //      toast.error("Metamask Is Not Configured...");
     //      return;
@@ -146,19 +146,19 @@ const AppContextProvider = ({ children }: Props) => {
     },[]);
 
     useEffect(() => {
-      if (!window.ethereum) return;
+      if (!window.phantom?.ethereum) return;
 
-      const ethereum = window.ethereum as any;
+      const ethereum = window.phantom.ethereum as any;
 
       const handleAccountsChanged = async (accounts: string[]) => {
         if (accounts.length === 0) {
           setAccount(null);
           setSigner(null);
         } 
-        if(!window.ethereum){
+        if(!window.phantom?.ethereum){
           return toast.error("Metamask Not installed ");
         }
-        const browserProvider = new ethers.BrowserProvider(window.ethereum);
+        const browserProvider = new ethers.BrowserProvider(window.phantom.ethereum);
         const signer = await browserProvider.getSigner();
         setAccount(accounts[0]);
         setSigner(signer);
